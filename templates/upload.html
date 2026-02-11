@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <h2 style="margin-bottom: 1.5rem;">Upload Document</h2>
+    <div class="card">
+        <form method="POST" enctype="multipart/form-data">
+            <label>Document Title *</label>
+            <input type="text" name="title" required>
+
+            <label>Document Type *</label>
+            <select name="doc_type" required>
+                {% for type_key, type_info in doc_types.items() %}
+                <option value="{{ type_key }}">{{ type_info.label }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Description</label>
+            <textarea name="description" rows="4" placeholder="Enter document description..."></textarea>
+
+            <label>Classification Level *</label>
+            <select name="classification" required>
+                {% for level in levels %}
+                <option value="{{ level }}">{{ level }}</option>
+                {% endfor %}
+            </select>
+
+            <label>Attach File (optional)</label>
+            <input type="file" name="file" style="padding: 0.5rem;">
+
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary">Upload Document</button>
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Document Type Legend -->
+    <div class="card" style="margin-top: 1.5rem;">
+        <h4 style="margin-bottom: 1rem; color: #aaa;">Document Types</h4>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
+            {% for type_key, type_info in doc_types.items() %}
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span style="width: 12px; height: 12px; background: {{ type_info.color }}; border-radius: 2px;"></span>
+                <span style="font-size: 0.85rem; color: #ccc;">{{ type_info.label }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

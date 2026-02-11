@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="margin-bottom: 1.5rem;">User Management</h2>
+
+<div class="card" style="padding: 0; overflow: hidden;">
+    <table>
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Current Clearance</th>
+                <th>Registered</th>
+                <th>Update Clearance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td><strong>{{ user.username }}</strong></td>
+                <td><span class="classification {{ user.clearance_level }}">{{ user.clearance_level }}</span></td>
+                <td>{{ user.created_at.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    <form action="{{ url_for('update_clearance', user_id=user.id) }}" method="POST" style="display: flex; gap: 0.5rem; align-items: center;">
+                        <select name="clearance" style="margin: 0; width: auto;">
+                            {% for level in levels %}
+                            <option value="{{ level }}" {% if level == user.clearance_level %}selected{% endif %}>{{ level }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn btn-primary" style="padding: 0.4rem 0.8rem;">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

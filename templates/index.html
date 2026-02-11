@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h2>Documents</h2>
+    <a href="{{ url_for('upload') }}" class="btn btn-primary">+ Upload Document</a>
+</div>
+
+<!-- Document Type Filter -->
+<div class="card" style="padding: 1rem; margin-bottom: 1.5rem;">
+    <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+        <span style="color: #aaa;">Filter by type:</span>
+        <a href="{{ url_for('index') }}" class="doc-type-filter {% if not filter_type %}active{% endif %}" style="padding: 0.3rem 0.8rem; border-radius: 4px; text-decoration: none; background: {% if not filter_type %}#e94560{% else %}#0f3460{% endif %}; color: white;">
+            All
+        </a>
+        {% for type_key, type_info in doc_types.items() %}
+        <a href="{{ url_for('index', type=type_key) }}" class="doc-type-filter {% if filter_type == type_key %}active{% endif %}"
+           style="padding: 0.3rem 0.8rem; border-radius: 4px; text-decoration: none; background: {% if filter_type == type_key %}{{ type_info.color }}{% else %}#0f3460{% endif %}; color: white; border-left: 3px solid {{ type_info.color }};">
+            {{ type_info.label }}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+
+{% if documents %}
+<table>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Classification</th>
+            <th>Uploaded By</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for doc in documents %}
+        <tr>
+            <td><strong>{{ doc.title }}</strong></td>
+            <td>
+                <span class="doc-type-badge" style="background: {{ doc.type_info.color }}; padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.8rem; color: white;">
+                    {{ doc.type_info.label }}
+                </span>
+            </td>
+            <td><span class="classification {{ doc.classification }}">{{ doc.classification }}</span></td>
+            <td>{{ doc.uploader.username if doc.uploader else 'Unknown' }}</td>
+            <td>{{ doc.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>
+                <a href="{{ url_for('view_document', doc_id=doc.id) }}" class="btn btn-secondary">View</a>
+                {% if doc.content %}
+                <a href="{{ url_for('download_document', doc_id=doc.id) }}" class="btn btn-secondary">Download</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="card" style="text-align: center; padding: 3rem;">
+    <p style="color: #aaa; margin-bottom: 1rem;">
+        {% if filter_type %}
+        No {{ doc_types[filter_type].label }} documents available at your clearance level.
+        {% else %}
+        No documents available at your clearance level.
+        {% endif %}
+    </p>
+    <a href="{{ url_for('upload') }}" class="btn btn-primary">Upload First Document</a>
+</div>
+{% endif %}
+{% endblock %}

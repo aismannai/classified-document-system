@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 style="margin-bottom: 1.5rem;">Audit Log</h2>
+
+<div class="card" style="padding: 0; overflow: hidden;">
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+            <tr>
+                <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ log.user.username if log.user else 'Unknown' }}</td>
+                <td>
+                    <span style="
+                        {% if 'DENIED' in log.action %}background: #dc3545;
+                        {% elif log.action == 'LOGIN' %}background: #28a745;
+                        {% elif log.action == 'LOGOUT' %}background: #6c757d;
+                        {% elif log.action == 'UPLOAD' %}background: #17a2b8;
+                        {% elif log.action == 'DELETE' %}background: #ffc107; color: black;
+                        {% else %}background: #0f3460;
+                        {% endif %}
+                        padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">
+                        {{ log.action }}
+                    </span>
+                </td>
+                <td style="color: #aaa;">{{ log.details or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
